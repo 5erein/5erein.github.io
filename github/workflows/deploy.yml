@@ -1,0 +1,24 @@
+name: Deploy Github pages
+on:
+  push:
+    branches:
+      - main    # 监听 main 分支的 push 操作，一旦有了这个操作，就触发 ACTION 部署。
+jobs:   # 触发事件后进行的操作
+  build-and-deploy:
+    runs-on: ubuntu-latest  # 部署服务器环境：ubuntu
+    steps:  # 步骤
+    - name: Checkout    # 检查分支
+      uses: actions/checkout@main
+      with:
+        persist-credentials: false
+    - name: Install and Build   # 安装和部署
+      run: |
+        npm install # 安装npm包
+        npm run-script build    # 执行 build 操作
+    - name: Deploy
+      uses: JamesIves/github-pages-deploy-action@releases/v3
+      with:
+        ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+        BRANCH: gh-pages
+        FOLDER: build
+        BUILD_SCRIPT: npm install && npm run build
